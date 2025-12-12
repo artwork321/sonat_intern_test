@@ -99,17 +99,23 @@ public class Bottle : MonoBehaviour
         string amountName = "_Amount" + waterAmount.Count;
         string colorName = "_Color" + waterAmount.Count;
 
-
         float topAmount = GetTopWaterAmount();
-        // Update stack
+
+        // Update stack to reflect the amount of water in the bottle
         if (topAmount == amount)
         {
+            // Remove all the top water
             waterAmount.Pop();
+            watermat.SetColor(colorName, Color.clear);
+        }
+        else
+        {
+            // Decrease the top amount by amount
+            waterAmount.Pop();
+            waterAmount.Push(topAmount - amount);
         }
 
-        watermat.SetFloat(amountName, amount);
-        watermat.SetColor(colorName, Color.clear);
-
+        watermat.SetFloat(amountName, topAmount - amount);
         totalWaterAmount -= amount;
     }
 
@@ -124,7 +130,7 @@ public class Bottle : MonoBehaviour
 
         string amountName = "_Amount" + waterAmount.Count;
 
-        // Update stack
+        // Update stack to reflect the new top amount
         float newAmount = waterAmount.Pop() + amount;
         waterAmount.Push(newAmount);
 
