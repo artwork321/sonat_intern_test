@@ -1,0 +1,139 @@
+using UnityEngine;
+using DG.Tweening;
+using System.Collections.Generic;
+
+public class Bottle : MonoBehaviour
+{
+    public Material watermat;
+    public SpriteRenderer spriteRenderer;
+
+    public Stack<float> waterAmount = new Stack<float>();
+
+    public Vector3 originalPosition;
+
+    public float totalWaterAmount;
+
+    public void Start()
+    {
+        if (watermat == null)
+        {
+            watermat = Instantiate(spriteRenderer.material);
+            spriteRenderer.material = watermat;
+
+            float a1 = watermat.GetFloat("_Amount1");
+            float a2 = watermat.GetFloat("_Amount2");
+            float a3 = watermat.GetFloat("_Amount3");
+            float a4 = watermat.GetFloat("_Amount4");
+
+            if (a1 > 0) waterAmount.Push(a1);
+            if (a2 > 0) waterAmount.Push(a2);
+            if (a3 > 0) waterAmount.Push(a3);
+            if (a4 > 0) waterAmount.Push(a4);
+
+            totalWaterAmount = a1 + a2 + a3 + a4;
+
+            originalPosition = transform.position;
+        }
+    }
+
+    void OnMouseDown()
+    {
+        OnClick();
+    }
+
+    public void Update()
+    {
+        if (watermat)
+        {
+            watermat.SetVector("_PosWorld", transform.position);
+            watermat.SetFloat("_Angle", transform.eulerAngles.z * Mathf.Deg2Rad * 0.90f);
+        }
+
+    }
+
+    public void OnClick()
+    {
+        // Set source bottle
+        if (BottleController.instance.source == null && !IsEmpty())
+        {
+            BottleController.instance.source = this;
+            GetSelectedAsSource();
+        }
+        // Undo selecting source bottle
+        else if (BottleController.instance.source == this)
+        {
+            BottleController.instance.source = null;
+            transform.DOMoveY(-2, 1);
+        }
+        // Check for destination bottle's validity and execute pour action
+        else if ((BottleController.instance.source != null
+                && (this.GetTopWaterColor() == BottleController.instance.source.GetTopWaterColor()) && isFull()) 
+                || IsEmpty())
+        {
+            BottleController.instance.dest = this;
+            BottleController.instance.PourOverDestination();
+        }
+    }
+
+    public void GetSelectedAsSource()
+    {
+        transform.DOMoveY(2, 1);
+    }
+
+    public float GetTopWaterAmount()
+    {
+        return waterAmount.Peek();
+    }
+
+    public Color GetTopWaterColor()
+    {
+        if (totalWaterAmount == 0) return Color.clear;
+
+        string colorName = "_Color" + waterAmount.Count;
+        return watermat.GetColor(colorName);
+    }
+
+    public void RemoveTopWaterAmount(float amount)
+    {
+        string amountName = "_Amount" + waterAmount.Count;
+        string colorName = "_Color" + waterAmount.Count;
+
+
+        float topAmount = GetTopWaterAmount();
+        // Update stack
+        if (topAmount == amount)
+        {
+            waterAmount.Pop();
+        }
+
+        watermat.SetFloat(amountName, amount);
+        watermat.SetColor(colorName, Color.clear);
+
+        totalWaterAmount -= amount;
+    }
+
+    public void addTopWaterAmount(float amount)
+    {
+        if (totalWaterAmount == 0) waterAmount.Push(0);
+
+        string amountName = "_Amount" + waterAmount.Count;
+
+        // Update stack
+        float newAmount = waterAmount.Pop() + amount;
+        waterAmount.Push(newAmount);
+
+        watermat.SetFloat(amountName, newAmount);
+
+        totalWaterAmount += amount;
+    }
+
+    public bool isFull()
+    {
+        return totalWaterAmount >= 1;
+    }
+
+    public bool IsEmpty()
+    {
+        return totalWaterAmount == 0;
+    }
+}
