@@ -54,20 +54,24 @@ public class Bottle : MonoBehaviour
     public void OnClick()
     {
         // Set source bottle
-        if (BottleController.instance.source == null && !IsEmpty())
+        if (BottleController.instance.source == null && IsEmpty())
+        {
+            return;
+        }
+        else if (BottleController.instance.source == null && !IsEmpty())
         {
             BottleController.instance.source = this;
-            GetSelectedAsSource();
+            transform.DOMoveY(1, 1).SetRelative();
         }
         // Undo selecting source bottle
         else if (BottleController.instance.source == this)
         {
             BottleController.instance.source = null;
-            transform.DOMoveY(-2, 1);
+            transform.DOMoveY(-1, 1).SetRelative();
         }
         // Check for destination bottle's validity and execute pour action
         else if ((BottleController.instance.source != null
-                && (this.GetTopWaterColor() == BottleController.instance.source.GetTopWaterColor()) && isFull()) 
+                 && !isFull())
                 || IsEmpty())
         {
             BottleController.instance.dest = this;
@@ -75,13 +79,10 @@ public class Bottle : MonoBehaviour
         }
     }
 
-    public void GetSelectedAsSource()
-    {
-        transform.DOMoveY(2, 1);
-    }
-
     public float GetTopWaterAmount()
     {
+        if (totalWaterAmount == 0) return totalWaterAmount;
+
         return waterAmount.Peek();
     }
 
@@ -112,9 +113,14 @@ public class Bottle : MonoBehaviour
         totalWaterAmount -= amount;
     }
 
-    public void addTopWaterAmount(float amount)
+    public void addTopWaterAmount(float amount, Color color)
     {
-        if (totalWaterAmount == 0) waterAmount.Push(0);
+        // Pour new color if bottle is empty
+        if (totalWaterAmount == 0)
+        {
+            watermat.SetColor("_Color1", color);
+            waterAmount.Push(0);
+        }
 
         string amountName = "_Amount" + waterAmount.Count;
 
@@ -123,7 +129,6 @@ public class Bottle : MonoBehaviour
         waterAmount.Push(newAmount);
 
         watermat.SetFloat(amountName, newAmount);
-
         totalWaterAmount += amount;
     }
 
