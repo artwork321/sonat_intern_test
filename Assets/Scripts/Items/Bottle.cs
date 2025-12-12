@@ -13,32 +13,42 @@ public class Bottle : MonoBehaviour
 
     public float totalWaterAmount;
 
-    public void Start()
+    public void Awake()
     {
         if (watermat == null)
         {
             watermat = Instantiate(spriteRenderer.material);
             spriteRenderer.material = watermat;
-
-            float a1 = watermat.GetFloat("_Amount1");
-            float a2 = watermat.GetFloat("_Amount2");
-            float a3 = watermat.GetFloat("_Amount3");
-            float a4 = watermat.GetFloat("_Amount4");
-
-            if (a1 > 0) waterAmount.Push(a1);
-            if (a2 > 0) waterAmount.Push(a2);
-            if (a3 > 0) waterAmount.Push(a3);
-            if (a4 > 0) waterAmount.Push(a4);
-
-            totalWaterAmount = a1 + a2 + a3 + a4;
-
-            originalPosition = transform.position;
         }
+
+        totalWaterAmount = 0;
+    }
+
+    public void Setup(BottleSettings settings)
+    {
+        for (int i = 0; i < settings.eachColor.Count; i++)
+        {
+            string colorName = "_Color" + (i + 1);
+            watermat.SetColor(colorName, settings.eachColor[i]);
+        }
+
+        for (int i = 0; i < settings.eachWaterAmount.Count; i++)
+        {
+            string amountName = "_Amount" + (i + 1);
+            float a = settings.eachWaterAmount[i];
+            watermat.SetFloat(amountName, a);
+
+            if (a > 0) waterAmount.Push(a);
+            totalWaterAmount += a;
+        }
+
+        originalPosition = transform.position;
     }
 
     void OnMouseDown()
     {
         OnClick();
+        Debug.Log("Click on bottle");
     }
 
     public void Update()
@@ -53,6 +63,11 @@ public class Bottle : MonoBehaviour
 
     public void OnClick()
     {
+        if (BottleController.instance.source != null)
+        {
+            Debug.Log(this.GetTopWaterColor());
+            Debug.Log(BottleController.instance.source.GetTopWaterColor());
+        }
         // Set source bottle
         if (BottleController.instance.source == null && IsEmpty())
         {
@@ -70,8 +85,8 @@ public class Bottle : MonoBehaviour
             transform.DOMoveY(-1, 1).SetRelative();
         }
         // Check for destination bottle's validity and execute pour action
-        else if ((BottleController.instance.source != null
-                 && !isFull())
+        else if ((BottleController.instance.source != null &&
+                this.GetTopWaterColor() == BottleController.instance.source.GetTopWaterColor() && !isFull())
                 || IsEmpty())
         {
             BottleController.instance.dest = this;
@@ -82,7 +97,6 @@ public class Bottle : MonoBehaviour
     public float GetTopWaterAmount()
     {
         if (totalWaterAmount == 0) return totalWaterAmount;
-
         return waterAmount.Peek();
     }
 

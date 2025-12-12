@@ -13,7 +13,6 @@ public class GameManager : MonoBehaviour
             Debug.LogWarning("There are two BottleControllers!");
         }
         instance = this;
-
         settings = Resources.Load<GameSettings>("GameSettings");
     }
 

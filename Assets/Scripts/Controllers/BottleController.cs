@@ -22,14 +22,16 @@ public class BottleController : MonoBehaviour
     {
         int numberOfBottles = GameManager.instance.settings.numberOfBottles;
         Debug.Log(numberOfBottles);
-        float numTop = Mathf.Ceil(numberOfBottles / 2);
+        float numTop = (numberOfBottles > 4) ? Mathf.Ceil(numberOfBottles / 2) : numberOfBottles;
         float space = GameManager.instance.settings.width / (numTop - 1);
         Vector3 bottlePosition = new Vector3(-GameManager.instance.settings.width / 2, GameManager.instance.settings.height, 0);
 
         // Calculate positions for each bottle
         for (int i = 0; i < numTop; i++)
         {
-            Instantiate(bottlePrefab, bottlePosition, transform.rotation, transform);
+            GameObject bottleObject = Instantiate(bottlePrefab, bottlePosition, transform.rotation, transform);
+            Bottle bottle = bottleObject.GetComponent<Bottle>();
+            bottle.Setup(GameManager.instance.settings.bottleSettings[i]);
             bottlePosition.x += space; // store as constant
         }
 
@@ -39,11 +41,11 @@ public class BottleController : MonoBehaviour
 
         for (int i = 0; i < numberOfBottles - numTop; i++)
         {
-            Instantiate(bottlePrefab, bottombottlePosition, transform.rotation, transform);
+            GameObject bottleObject = Instantiate(bottlePrefab, bottombottlePosition, transform.rotation, transform);
+            Bottle bottle = bottleObject.GetComponent<Bottle>();
+            bottle.Setup(GameManager.instance.settings.bottleSettings[i]);
             bottombottlePosition.x += bottomSpace; // store as constant
         }
-
-        // Assume the input is [bottle1: {color: red, amount: 0.25}, bottle2: {...}]
     }
 
     public void PourOverDestination()
