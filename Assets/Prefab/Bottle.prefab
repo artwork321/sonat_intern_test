@@ -55,7 +55,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: faac79f825791454f8599d0f5571799b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -114,8 +114,8 @@ Transform:
   m_GameObject: {fileID: 5699871520386511311}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -245, y: -1, z: 0}
-  m_LocalScale: {x: 11.625, y: 11.625, z: 11.625}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7396480881026922017}
@@ -190,9 +190,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   watermat: {fileID: 0}
   spriteRenderer: {fileID: 5050557250884585505}
-  scaleOffsetcurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
+  originalPosition: {x: 0, y: 0, z: 0}
+  totalWaterAmount: 0

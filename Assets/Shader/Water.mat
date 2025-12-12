@@ -61,10 +61,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Amount1: 0.25
-    - _Amount2: 0.25
-    - _Amount3: 0.24
-    - _Amount4: 0.25
+    - _Amount1: 1
+    - _Amount2: 0
+    - _Amount3: 0
+    - _Amount4: 0
     - _Angle: 0
     - _BumpScale: 1
     - _Cutoff: 0.5
@@ -87,10 +87,10 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Color1: {r: 1, g: 0.5113207, b: 0.5113207, a: 1}
-    - _Color2: {r: 0.3507765, g: 0.2320754, b: 1, a: 1}
-    - _Color3: {r: 0.1010537, g: 0.645283, b: 0.11106438, a: 1}
-    - _Color4: {r: 1, g: 0.8428364, b: 0, a: 1}
+    - _Color1: {r: 1, g: 0, b: 0, a: 1}
+    - _Color2: {r: 0.21960783, g: 0.21960783, b: 0.21960783, a: 0}
+    - _Color3: {r: 0.21960783, g: 0.21960783, b: 0.21960783, a: 0}
+    - _Color4: {r: 0.21960783, g: 0.21960783, b: 0.21960783, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _PosWorld: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []

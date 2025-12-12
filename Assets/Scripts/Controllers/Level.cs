@@ -2,15 +2,8 @@ using UnityEngine;
 
 public class Level : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    // Information of each level
+    int numberOfBottles;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    // Configuration of Bottles
 }
