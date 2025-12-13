@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Linq;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
@@ -57,6 +59,7 @@ public class GameManager : MonoBehaviour
     public void LoadNextLevel()
     {
         // Clear old instances
+        BottleController.instance.DestroyBottles();
 
         // Load new level
         LoadLevel(currentLevel + 1);
@@ -64,9 +67,37 @@ public class GameManager : MonoBehaviour
 
     public void SetState(GameState state)
     {
-        Debug.Log("Hello World");
         State = state;
     }
 
+    public void IsWin()
+    {
+        List<Bottle> allBottles = BottleController.instance.bottles;
+
+        foreach (Bottle bottle in allBottles)
+        {
+            if (!bottle.IsComplete() && !bottle.IsEmpty()) return;
+        }
+
+        SetState(GameState.WIN);
+    }
+
+    public void IsLose()
+    {
+        // Check if all top colors are different
+        List<Bottle> allBottles = BottleController.instance.bottles;
+
+        List<Color> allTopColors = allBottles.Select(bottle => bottle.GetTopWaterColor()).ToList();
+        int uniqueColorCount = allTopColors.Distinct().Count();
+        bool isThereEmptyBottle = allTopColors.Any(color => color == Color.clear);
+
+        if (!isThereEmptyBottle && (allTopColors.Count == uniqueColorCount)) SetState(GameState.LOSE);
+    }
+
+    public void CheckEndGameCondition()
+    {
+        IsWin();
+        IsLose();
+    }
 
 }

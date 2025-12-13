@@ -20,7 +20,8 @@ public class LevelPanel : Panel
         {
             GameObject levelButton = Instantiate(levelButtonPrefab, transform.position, transform.rotation, levelGrid.transform);
             levelButton.GetComponentInChildren<TextMeshProUGUI>().text = (i + 1).ToString();
-            levelButton.GetComponent<Button>().onClick.AddListener(() => OnClickLevel(i));
+            int levelIndex = i + 1;
+            levelButton.GetComponent<Button>().onClick.AddListener(() => OnClickLevel(levelIndex));
         }
 
         returnButton.onClick.AddListener(OnClickReturn);

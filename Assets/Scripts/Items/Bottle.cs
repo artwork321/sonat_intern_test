@@ -48,7 +48,6 @@ public class Bottle : MonoBehaviour
     void OnMouseDown()
     {
         OnClick();
-        Debug.Log("Click on bottle");
     }
 
     public void Update()
@@ -63,11 +62,7 @@ public class Bottle : MonoBehaviour
 
     public void OnClick()
     {
-        if (BottleController.instance.source != null)
-        {
-            Debug.Log(this.GetTopWaterColor());
-            Debug.Log(BottleController.instance.source.GetTopWaterColor());
-        }
+
         // Set source bottle
         if (BottleController.instance.source == null && IsEmpty())
         {
@@ -75,8 +70,12 @@ public class Bottle : MonoBehaviour
         }
         else if (BottleController.instance.source == null && !IsEmpty())
         {
-            BottleController.instance.source = this;
-            transform.DOMoveY(1, 1).SetRelative();
+            if (!IsComplete())
+            {
+                BottleController.instance.source = this;
+                transform.DOMoveY(1, 1).SetRelative();
+            }
+
         }
         // Undo selecting source bottle
         else if (BottleController.instance.source == this)
@@ -161,4 +160,10 @@ public class Bottle : MonoBehaviour
     {
         return totalWaterAmount == 0;
     }
+
+    public bool IsComplete()
+    {
+        return waterAmount.Count == 1 && totalWaterAmount == 1;
+    }
+
 }

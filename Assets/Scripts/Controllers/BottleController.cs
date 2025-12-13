@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 using DG.Tweening;
 
 public class BottleController : MonoBehaviour
@@ -6,6 +7,7 @@ public class BottleController : MonoBehaviour
     public GameObject bottlePrefab;
     public Bottle source;
     public Bottle dest;
+    public List<Bottle> bottles;
     public static BottleController instance;
 
 
@@ -21,7 +23,6 @@ public class BottleController : MonoBehaviour
     public void SetupBottles()
     {
         int numberOfBottles = GameManager.instance.settings.numberOfBottles;
-        Debug.Log(numberOfBottles);
         float numTop = (numberOfBottles > 4) ? Mathf.Ceil(numberOfBottles / 2) : numberOfBottles;
         float space = GameManager.instance.settings.width / (numTop - 1);
         Vector3 bottlePosition = new Vector3(-GameManager.instance.settings.width / 2, GameManager.instance.settings.height, 0);
@@ -33,6 +34,7 @@ public class BottleController : MonoBehaviour
             Bottle bottle = bottleObject.GetComponent<Bottle>();
             bottle.Setup(GameManager.instance.settings.bottleSettings[i]);
             bottlePosition.x += space; // store as constant
+            bottles.Add(bottle);
         }
 
 
@@ -45,6 +47,7 @@ public class BottleController : MonoBehaviour
             Bottle bottle = bottleObject.GetComponent<Bottle>();
             bottle.Setup(GameManager.instance.settings.bottleSettings[i]);
             bottombottlePosition.x += bottomSpace; // store as constant
+            bottles.Add(bottle);
         }
     }
 
@@ -71,6 +74,21 @@ public class BottleController : MonoBehaviour
         {
             source = null;
             dest = null;
+            GameManager.instance.CheckEndGameCondition();
         });
+
+    }
+
+    public void DestroyBottles()
+    {
+        foreach (Bottle bottle in bottles)
+        {
+            Destroy(bottle.gameObject);
+        }
+
+        bottles.Clear();
+
+        source = null;
+        dest = null;
     }
 }

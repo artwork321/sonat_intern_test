@@ -32,7 +32,6 @@ public class PanelManager : MonoBehaviour
 
     public void SwitchGameState(GameManager.GameState m_state)
     {
-        Debug.Log(m_state);
         switch (m_state)
         {
             case GameManager.GameState.MENU:
