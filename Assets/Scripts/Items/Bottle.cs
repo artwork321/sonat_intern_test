@@ -13,6 +13,8 @@ public class Bottle : MonoBehaviour
 
     public float totalWaterAmount;
 
+    private BoxCollider2D bottleCollider;
+
     public void Awake()
     {
         if (watermat == null)
@@ -20,6 +22,7 @@ public class Bottle : MonoBehaviour
             watermat = Instantiate(spriteRenderer.material);
             spriteRenderer.material = watermat;
         }
+        bottleCollider = GetComponent<BoxCollider2D>();
 
         totalWaterAmount = 0;
     }
@@ -60,6 +63,16 @@ public class Bottle : MonoBehaviour
 
     }
 
+    public void LockInteration()
+    {
+        bottleCollider.enabled = false;
+    }
+
+    public void UnlockInteration()
+    {
+        bottleCollider.enabled = true;
+    }
+
     public void OnClick()
     {
 
@@ -70,7 +83,7 @@ public class Bottle : MonoBehaviour
         }
         else if (BottleController.instance.source == null && !IsEmpty())
         {
-            if (!IsComplete())
+            if (!IsComplete() && this != BottleController.instance.dest)
             {
                 BottleController.instance.source = this;
                 transform.DOMoveY(1, 1).SetRelative();
@@ -83,6 +96,7 @@ public class Bottle : MonoBehaviour
             BottleController.instance.source = null;
             transform.DOMoveY(-1, 1).SetRelative();
         }
+
         // Check for destination bottle's validity and execute pour action
         else if ((BottleController.instance.source != null &&
                 this.GetTopWaterColor() == BottleController.instance.source.GetTopWaterColor() && !isFull())

@@ -47,6 +47,9 @@ public class GameManager : MonoBehaviour
 
     public void LoadLevel(int i)
     {
+        // Destroy old game's instances
+        BottleController.instance.DestroyBottles();
+
         // Load the right game configuration
         string levelString = "Levels/Level_" + i;
         settings = Resources.Load<GameSettings>(levelString);
@@ -58,9 +61,6 @@ public class GameManager : MonoBehaviour
 
     public void LoadNextLevel()
     {
-        // Clear old instances
-        BottleController.instance.DestroyBottles();
-
         // Load new level
         LoadLevel(currentLevel + 1);
     }

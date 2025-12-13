@@ -23,7 +23,7 @@ public class BottleController : MonoBehaviour
     public void SetupBottles()
     {
         int numberOfBottles = GameManager.instance.settings.numberOfBottles;
-        float numTop = (numberOfBottles > 4) ? Mathf.Ceil(numberOfBottles / 2) : numberOfBottles;
+        int numTop = (numberOfBottles > 4) ? Mathf.CeilToInt(numberOfBottles / 2) : numberOfBottles;
         float space = GameManager.instance.settings.width / (numTop - 1);
         Vector3 bottlePosition = new Vector3(-GameManager.instance.settings.width / 2, GameManager.instance.settings.height, 0);
 
@@ -41,7 +41,7 @@ public class BottleController : MonoBehaviour
         Vector3 bottombottlePosition = new Vector3(-GameManager.instance.settings.width / 2, -GameManager.instance.settings.height, 0);
         float bottomSpace = GameManager.instance.settings.width / (numberOfBottles - numTop - 1);
 
-        for (int i = 0; i < numberOfBottles - numTop; i++)
+        for (int i = numTop; i < numberOfBottles; i++)
         {
             GameObject bottleObject = Instantiate(bottlePrefab, bottombottlePosition, transform.rotation, transform);
             Bottle bottle = bottleObject.GetComponent<Bottle>();
@@ -53,27 +53,33 @@ public class BottleController : MonoBehaviour
 
     public void PourOverDestination()
     {
-        // Calculate path from source to destination
-        Vector3 destPosition = dest.transform.position;
-        destPosition.y += dest.GetComponent<SpriteRenderer>().bounds.extents.y;
-        destPosition.x -= dest.GetComponent<SpriteRenderer>().bounds.extents.y;
+        Bottle tempSource = source;
+        Bottle tempDest = dest;
+        tempSource.LockInteration();
 
-        float topAmount = source.GetTopWaterAmount();
-        Color topColor = source.GetTopWaterColor();
-        float pourAmount = (topAmount > 1 - dest.totalWaterAmount) ? 1 - dest.totalWaterAmount : topAmount;
+        source = null;
+
+        // Calculate path from source to destination
+        Vector3 destPosition = tempDest.transform.position;
+        destPosition.y += tempDest.GetComponent<SpriteRenderer>().bounds.extents.y;
+        destPosition.x -= tempDest.GetComponent<SpriteRenderer>().bounds.extents.y;
+
+        float topAmount = tempSource.GetTopWaterAmount();
+        Color topColor = tempSource.GetTopWaterColor();
+        float pourAmount = (topAmount > 1 - tempDest.totalWaterAmount) ? 1 - tempDest.totalWaterAmount : topAmount;
 
         var seq = DOTween.Sequence();
-        seq.Append(source.transform.DOMove(destPosition, 1));
+        seq.Append(tempSource.transform.DOMove(destPosition, 1));
         seq.AppendCallback(() =>
         {
-            source.RemoveTopWaterAmount(pourAmount);
-            dest.addTopWaterAmount(pourAmount, topColor);
+            tempSource.RemoveTopWaterAmount(pourAmount);
+            tempDest.addTopWaterAmount(pourAmount, topColor);
         });
-        seq.Append(source.transform.DOMove(source.originalPosition, 1));
+        seq.Append(tempSource.transform.DOMove(tempSource.originalPosition, 1));
         seq.AppendCallback(() =>
         {
-            source = null;
             dest = null;
+            tempSource.UnlockInteration();
             GameManager.instance.CheckEndGameCondition();
         });
 
