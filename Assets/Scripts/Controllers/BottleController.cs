@@ -33,7 +33,7 @@ public class BottleController : MonoBehaviour
             GameObject bottleObject = Instantiate(bottlePrefab, bottlePosition, transform.rotation, transform);
             Bottle bottle = bottleObject.GetComponent<Bottle>();
             bottle.Setup(GameManager.instance.settings.bottleSettings[i]);
-            bottlePosition.x += space; // store as constant
+            bottlePosition.x += space;
             bottles.Add(bottle);
         }
 
@@ -46,7 +46,7 @@ public class BottleController : MonoBehaviour
             GameObject bottleObject = Instantiate(bottlePrefab, bottombottlePosition, transform.rotation, transform);
             Bottle bottle = bottleObject.GetComponent<Bottle>();
             bottle.Setup(GameManager.instance.settings.bottleSettings[i]);
-            bottombottlePosition.x += bottomSpace; // store as constant
+            bottombottlePosition.x += bottomSpace;
             bottles.Add(bottle);
         }
     }
@@ -57,7 +57,6 @@ public class BottleController : MonoBehaviour
         Bottle tempDest = dest;
         tempSource.LockInteration();
         float direction = 1;
-
         source = null;
 
         // Calculate path from source to destination
@@ -81,25 +80,26 @@ public class BottleController : MonoBehaviour
         // Run Animation
         var seq = DOTween.Sequence();
         seq.Append(tempSource.transform.DOMove(destPosition, 1));
+
         seq.Append(tempSource.transform.DORotate(new Vector3(0f, 0f, angle), 1, RotateMode.Fast));
         seq.Join(DOTween.Sequence().AppendCallback(() =>
         {
+            AudioManager.instance.PlaySfx("waterPouring", 0.4f);
             tempDest.addTopWaterAmount(pourAmount, topColor);
         }).AppendInterval(1f));
-        seq.AppendCallback(() => tempSource.RemoveTopWaterAmount(pourAmount));
-        seq.Append(tempSource.transform.DOMove(tempSource.originalPosition, 1));
-        seq.Join(DOTween.Sequence().AppendCallback(() =>
-        {
-            tempSource.transform.DORotate(new Vector3(0f, 0f, 0f), 1, RotateMode.Fast);
-        }));
+        seq.AppendCallback(() => { tempSource.RemoveTopWaterAmount(pourAmount); AudioManager.instance.StopSfx(); });
 
+        seq.Append(tempSource.transform.DORotate(new Vector3(0f, 0f, 0f), 1, RotateMode.Fast));
+        seq.Append(tempSource.transform.DOMove(tempSource.originalPosition, 1));
         seq.AppendCallback(() =>
         {
             dest = null;
             tempSource.UnlockInteration();
+
+            if (tempDest.IsComplete()) AudioManager.instance.PlaySfx("bottleFull");
+
             GameManager.instance.CheckEndGameCondition();
         });
-
     }
 
     public float GetRotateAngle(float totalHeight)
@@ -118,7 +118,6 @@ public class BottleController : MonoBehaviour
         }
 
         bottles.Clear();
-
         source = null;
         dest = null;
     }

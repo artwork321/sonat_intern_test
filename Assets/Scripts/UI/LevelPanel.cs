@@ -30,12 +30,14 @@ public class LevelPanel : Panel
 
     public void OnClickLevel(int level)
     {
+        AudioManager.instance.PlaySfx("buttonClick", 0.3f);
         GameManager.instance.SetState(GameManager.GameState.IN_GAME);
         GameManager.instance.LoadLevel(level);
     }
 
     public void OnClickReturn()
     {
+        AudioManager.instance.PlaySfx("buttonClick", 0.3f);
         GameManager.instance.SetState(GameManager.GameState.MENU);
     }
 }

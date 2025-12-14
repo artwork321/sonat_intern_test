@@ -16,6 +16,7 @@ public class LosePanel : Panel
 
     public void OnClickReturn()
     {
+        AudioManager.instance.PlaySfx("buttonClick", 0.3f);
         GameManager.instance.SetState(GameManager.GameState.LEVEL);
     }
 }

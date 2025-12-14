@@ -12,6 +12,7 @@ public class MenuPanel : Panel
 
     public void OnCLickStart()
     {
+        AudioManager.instance.PlaySfx("buttonClick", 0.3f);
         GameManager.instance.SetState(GameManager.GameState.LEVEL);
     }
 }

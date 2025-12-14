@@ -38,11 +38,16 @@ public class GameManager : MonoBehaviour
     {
         if (instance != null)
         {
-            Debug.LogWarning("There are two BottleControllers!");
+            Debug.LogWarning("There are two GameManager!");
         }
         instance = this;
 
         panelManager = GameObject.FindFirstObjectByType<PanelManager>();
+    }
+
+    public bool HaveNextLevel()
+    {
+        return currentLevel + 1 <= Resources.LoadAll<GameSettings>("Levels").Length;
     }
 
     public void LoadLevel(int i)

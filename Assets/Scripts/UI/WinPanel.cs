@@ -18,12 +18,18 @@ public class WinPanel : Panel
 
     public void OnClickNextLevel()
     {
-        GameManager.instance.SetState(GameManager.GameState.IN_GAME);
-        GameManager.instance.LoadNextLevel();
+        AudioManager.instance.PlaySfx("buttonClick", 0.3f);
+
+        if (GameManager.instance.HaveNextLevel())
+        {
+            GameManager.instance.SetState(GameManager.GameState.IN_GAME);
+            GameManager.instance.LoadNextLevel();
+        }
     }
 
     public void OnClickReturn()
     {
+        AudioManager.instance.PlaySfx("buttonClick", 0.3f);
         GameManager.instance.SetState(GameManager.GameState.LEVEL);
     }
 }

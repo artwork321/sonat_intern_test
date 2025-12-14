@@ -105,6 +105,7 @@ public class Bottle : MonoBehaviour
             if (!IsComplete() && this != BottleController.instance.dest)
             {
                 BottleController.instance.source = this;
+                AudioManager.instance.PlaySfx("bottleUp");
                 transform.DOMoveY(1, 1).SetRelative();
             }
 
@@ -113,6 +114,7 @@ public class Bottle : MonoBehaviour
         else if (BottleController.instance.source == this)
         {
             BottleController.instance.source = null;
+            AudioManager.instance.PlaySfx("bottleDown");
             transform.DOMoveY(-1, 1).SetRelative();
         }
 
