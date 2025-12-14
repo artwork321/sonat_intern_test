@@ -7,8 +7,7 @@ public class Bottle : MonoBehaviour
 {
     public Material watermat;
     public SpriteRenderer spriteRenderer;
-
-    public AnimationCurve scaleOffsetCurve;
+    public SpriteRenderer lidSprite;
 
     public AnimationCurve fillAmountCurve;
 
@@ -30,6 +29,7 @@ public class Bottle : MonoBehaviour
             spriteRenderer.material = watermat;
         }
         bottleCollider = GetComponent<BoxCollider2D>();
+        lidSprite.gameObject.SetActive(false);
 
         totalWaterAmount = 0;
     }
@@ -77,9 +77,7 @@ public class Bottle : MonoBehaviour
             angle = 360f - angle;
         }
 
-        // if (scaleOffsetCurve != null) watermat.SetFloat("_ScaleOffset", scaleOffsetCurve.Evaluate(angle));
         if (fillAmountCurve != null) watermat.SetFloat("_VisibleAmount", fillAmountCurve.Evaluate(angle));
-
     }
 
     public void LockInteration()
@@ -209,6 +207,20 @@ public class Bottle : MonoBehaviour
         watermat.SetFloat(amountName, endAmount);
         totalWaterAmount = newTotal;
         isAnimating = false;
+    }
+
+    public void CompleteAnimation()
+    {
+        lidSprite.gameObject.SetActive(true);
+
+        Vector3 originalScale = spriteRenderer.transform.parent.transform.localScale;
+        Vector3 newScale = originalScale;
+        newScale.y *= 0.90f;
+
+        var seq = DOTween.Sequence();
+        seq.Append(lidSprite.transform.DOLocalMove(new Vector3(0, 0, 0), 0.5f));
+        seq.Append(spriteRenderer.transform.parent.transform.DOScale(newScale, 0.3f));
+        seq.Append(spriteRenderer.transform.parent.transform.DOScale(originalScale, 0.3f));
     }
 
     public bool isFull()

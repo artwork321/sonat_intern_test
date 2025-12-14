@@ -96,7 +96,11 @@ public class BottleController : MonoBehaviour
             dest = null;
             tempSource.UnlockInteration();
 
-            if (tempDest.IsComplete()) AudioManager.instance.PlaySfx("bottleFull");
+            if (tempDest.IsComplete())
+            {
+                tempDest.CompleteAnimation();
+                AudioManager.instance.PlaySfx("bottleFull");
+            }
 
             GameManager.instance.CheckEndGameCondition();
         });
