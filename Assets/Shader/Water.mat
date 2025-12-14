@@ -61,8 +61,8 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Amount1: 1
-    - _Amount2: 0
+    - _Amount1: 0.25
+    - _Amount2: 0.5
     - _Amount3: 0
     - _Amount4: 0
     - _Angle: 0
@@ -80,6 +80,7 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _ScaleOffset: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -87,10 +88,10 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Color1: {r: 1, g: 0, b: 0, a: 1}
-    - _Color2: {r: 0.21960783, g: 0.21960783, b: 0.21960783, a: 0}
-    - _Color3: {r: 0.21960783, g: 0.21960783, b: 0.21960783, a: 0}
-    - _Color4: {r: 0.21960783, g: 0.21960783, b: 0.21960783, a: 0}
+    - _Color1: {r: 1, g: 0, b: 0, a: 0}
+    - _Color2: {r: 1, g: 1, b: 1, a: 1}
+    - _Color3: {r: 0, g: 0, b: 0, a: 0}
+    - _Color4: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _PosWorld: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []

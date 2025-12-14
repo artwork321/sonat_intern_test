@@ -17,7 +17,9 @@ Shader "Unlit/Water"
         _FillMin("Fill Min", Range(0,1)) = 0.2
         _FillMax("Fill Max", Range(0,1)) = 0.75
         _PosWorld("PosWorld", Vector)=(0,0,0,0)
-        _Angle("Angle", Float) = 0
+        _Bottom("Bottom", Float)=0
+        _HeightImage("Height Image", Float)=3
+        _ScaleOffset("ScaleOffset", Float) = 1
     }
     SubShader
     {
@@ -62,7 +64,9 @@ Shader "Unlit/Water"
             float _FillMax;
             float _FillAmount;
             float4 _PosWorld;
-            float _Angle;
+            float _HeightImage;
+            float _Bottom;
+            float _ScaleOffset;
 
             v2f vert(appdata i)
             {
@@ -73,23 +77,10 @@ Shader "Unlit/Water"
                 return o;
             }
 
-            float2 RotateUV(float2 uv, float angle)
-            {
-                float s = sin(angle);
-                float c = cos(angle);
-
-                // rotate around center (0.5,0.5)
-                uv -= 0.5;
-                float2 r = float2(
-                    uv.x * c - uv.y * s,
-                    uv.x * s + uv.y * c
-                );
-                return r + 0.5;
-            }
-
             float4 frag(v2f i):SV_Target
             {
                 float4 col = 0;
+                float nmPos = (i.world_Pos.y - _Bottom) / _HeightImage;
 
                 // Normalize Amount
                 _FillAmount = _Amount1 + _Amount2 + _Amount3 + _Amount4;
@@ -102,11 +93,11 @@ Shader "Unlit/Water"
                 float _NormAmount4 = lerp(_FillMin, _FillMax, _FillAmount);
 
                 // Control number of color and their amount
-                float mask = step(RotateUV(i.uv1, _Angle).y, cutoff);
-                float s1 = step(RotateUV(i.uv1, _Angle).y, _NormAmount1);
-                float s2 = step(RotateUV(i.uv1, _Angle).y, _NormAmount2) - s1;
-                float s3 = step(RotateUV(i.uv1, _Angle).y, _NormAmount3) - step(RotateUV(i.uv1, _Angle).y, _NormAmount2);
-                float s4 = step(RotateUV(i.uv1, _Angle).y, _NormAmount4) - step(RotateUV(i.uv1, _Angle).y, _NormAmount3);
+                float mask = step(nmPos, cutoff*_ScaleOffset);
+                float s1 = step(nmPos, _NormAmount1*_ScaleOffset);
+                float s2 = step(nmPos, _NormAmount2*_ScaleOffset) - s1;
+                float s3 = step(nmPos, _NormAmount3*_ScaleOffset) - step(nmPos, _NormAmount2*_ScaleOffset);
+                float s4 = step(nmPos, _NormAmount4*_ScaleOffset) - step(nmPos, _NormAmount3*_ScaleOffset);
 
                 col = lerp(col, _Color4, s4);
                 col = lerp(col, _Color3, s3);

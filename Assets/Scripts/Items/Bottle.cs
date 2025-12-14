@@ -7,6 +7,8 @@ public class Bottle : MonoBehaviour
     public Material watermat;
     public SpriteRenderer spriteRenderer;
 
+    public AnimationCurve scaleOffsetcurve;
+
     public Stack<float> waterAmount = new Stack<float>();
 
     public Vector3 originalPosition;
@@ -58,8 +60,12 @@ public class Bottle : MonoBehaviour
         if (watermat)
         {
             watermat.SetVector("_PosWorld", transform.position);
-            watermat.SetFloat("_Angle", transform.eulerAngles.z * Mathf.Deg2Rad * 0.90f);
+            watermat.SetFloat("_Bottom", spriteRenderer.bounds.min.y);
+            watermat.SetFloat("_HeightImage", spriteRenderer.bounds.size.y);
         }
+
+        float angle = transform.eulerAngles.z;
+        if (scaleOffsetcurve != null) watermat.SetFloat("_ScaleOffset", scaleOffsetcurve.Evaluate(angle));
 
     }
 
