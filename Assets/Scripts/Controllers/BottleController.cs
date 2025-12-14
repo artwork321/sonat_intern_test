@@ -56,26 +56,43 @@ public class BottleController : MonoBehaviour
         Bottle tempSource = source;
         Bottle tempDest = dest;
         tempSource.LockInteration();
+        float direction = 1;
 
         source = null;
 
         // Calculate path from source to destination
         Vector3 destPosition = tempDest.transform.position;
-        destPosition.y += tempDest.GetComponent<SpriteRenderer>().bounds.extents.y;
-        destPosition.x -= tempDest.GetComponent<SpriteRenderer>().bounds.extents.y;
+        destPosition.y += tempDest.GetComponent<SpriteRenderer>().bounds.extents.y + 0.25f;
+
+        if (tempSource.transform.position.x <= tempDest.transform.position.x)
+        {
+            direction = -1;
+            destPosition.x -= tempDest.GetComponent<SpriteRenderer>().bounds.extents.y;
+        }
+
+        else
+            destPosition.x += tempDest.GetComponent<SpriteRenderer>().bounds.extents.y;
 
         float topAmount = tempSource.GetTopWaterAmount();
         Color topColor = tempSource.GetTopWaterColor();
         float pourAmount = (topAmount > 1 - tempDest.totalWaterAmount) ? 1 - tempDest.totalWaterAmount : topAmount;
+        float angle = GetRotateAngle(pourAmount + 1 - tempSource.totalWaterAmount) * direction;
 
+        // Run Animation
         var seq = DOTween.Sequence();
         seq.Append(tempSource.transform.DOMove(destPosition, 1));
-        seq.AppendCallback(() =>
+        seq.Append(tempSource.transform.DORotate(new Vector3(0f, 0f, angle), 1, RotateMode.Fast));
+        seq.Join(DOTween.Sequence().AppendCallback(() =>
         {
-            tempSource.RemoveTopWaterAmount(pourAmount);
             tempDest.addTopWaterAmount(pourAmount, topColor);
-        });
+        }).AppendInterval(1f));
+        seq.AppendCallback(() => tempSource.RemoveTopWaterAmount(pourAmount));
         seq.Append(tempSource.transform.DOMove(tempSource.originalPosition, 1));
+        seq.Join(DOTween.Sequence().AppendCallback(() =>
+        {
+            tempSource.transform.DORotate(new Vector3(0f, 0f, 0f), 1, RotateMode.Fast);
+        }));
+
         seq.AppendCallback(() =>
         {
             dest = null;
@@ -83,6 +100,14 @@ public class BottleController : MonoBehaviour
             GameManager.instance.CheckEndGameCondition();
         });
 
+    }
+
+    public float GetRotateAngle(float totalHeight)
+    {
+        if (totalHeight <= 0.25) return 55f;
+        else if (totalHeight <= 0.5) return 75f;
+        else if (totalHeight <= 0.75) return 85f;
+        else return 100f;
     }
 
     public void DestroyBottles()

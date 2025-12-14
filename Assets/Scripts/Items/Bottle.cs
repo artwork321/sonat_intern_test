@@ -1,13 +1,16 @@
 using UnityEngine;
-using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 
 public class Bottle : MonoBehaviour
 {
     public Material watermat;
     public SpriteRenderer spriteRenderer;
 
-    public AnimationCurve scaleOffsetcurve;
+    public AnimationCurve scaleOffsetCurve;
+
+    public AnimationCurve fillAmountCurve;
 
     public Stack<float> waterAmount = new Stack<float>();
 
@@ -16,6 +19,8 @@ public class Bottle : MonoBehaviour
     public float totalWaterAmount;
 
     private BoxCollider2D bottleCollider;
+
+    private bool isAnimating = false;
 
     public void Awake()
     {
@@ -47,6 +52,7 @@ public class Bottle : MonoBehaviour
             totalWaterAmount += a;
         }
 
+        watermat.SetFloat("_VisibleAmount", totalWaterAmount);
         originalPosition = transform.position;
     }
 
@@ -65,7 +71,14 @@ public class Bottle : MonoBehaviour
         }
 
         float angle = transform.eulerAngles.z;
-        if (scaleOffsetcurve != null) watermat.SetFloat("_ScaleOffset", scaleOffsetcurve.Evaluate(angle));
+
+        if (angle > 180f)
+        {
+            angle = 360f - angle;
+        }
+
+        // if (scaleOffsetCurve != null) watermat.SetFloat("_ScaleOffset", scaleOffsetCurve.Evaluate(angle));
+        if (fillAmountCurve != null) watermat.SetFloat("_VisibleAmount", fillAmountCurve.Evaluate(angle));
 
     }
 
@@ -150,6 +163,7 @@ public class Bottle : MonoBehaviour
 
         watermat.SetFloat(amountName, topAmount - amount);
         totalWaterAmount -= amount;
+        // watermat.SetFloat("_VisibleAmount", totalWaterAmount);
     }
 
     public void addTopWaterAmount(float amount, Color color)
@@ -164,11 +178,35 @@ public class Bottle : MonoBehaviour
         string amountName = "_Amount" + waterAmount.Count;
 
         // Update stack to reflect the new top amount
-        float newAmount = waterAmount.Pop() + amount;
+        float startAmount = waterAmount.Pop();
+        float newAmount = startAmount + amount;
+        float newTotal = totalWaterAmount + amount;
         waterAmount.Push(newAmount);
 
-        watermat.SetFloat(amountName, newAmount);
-        totalWaterAmount += amount;
+
+        if (!isAnimating)
+            StartCoroutine(AnimateWaterFill(startAmount, newAmount, newTotal, amountName));
+    }
+
+    private IEnumerator AnimateWaterFill(float startAmount, float endAmount, float newTotal, string amountName)
+    {
+        isAnimating = true;
+        float elapsedTime = 0f;
+        float volumeChange = endAmount - startAmount;
+        float waterAmount = startAmount;
+
+        while (elapsedTime < 1f)
+        {
+            waterAmount = Mathf.Lerp(startAmount, endAmount, elapsedTime / 1f);
+            watermat.SetFloat(amountName, waterAmount);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        watermat.SetFloat(amountName, endAmount);
+        totalWaterAmount = newTotal;
+        isAnimating = false;
     }
 
     public bool isFull()

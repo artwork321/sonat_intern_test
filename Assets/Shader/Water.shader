@@ -13,6 +13,7 @@ Shader "Unlit/Water"
         _Amount2("Amount2", Float) = 0.25
         _Amount3("Amount3", Float) = 0.25
         _Amount4("Amount4", Float) = 0.25
+        _VisibleAmount("Visible Amount", Range(0,1)) = 0
 
         _FillMin("Fill Min", Range(0,1)) = 0.2
         _FillMax("Fill Max", Range(0,1)) = 0.75
@@ -62,7 +63,7 @@ Shader "Unlit/Water"
 
             float _FillMin;
             float _FillMax;
-            float _FillAmount;
+            float _VisibleAmount;
             float4 _PosWorld;
             float _HeightImage;
             float _Bottom;
@@ -83,14 +84,13 @@ Shader "Unlit/Water"
                 float nmPos = (i.world_Pos.y - _Bottom) / _HeightImage;
 
                 // Normalize Amount
-                _FillAmount = _Amount1 + _Amount2 + _Amount3 + _Amount4;
-                float t = saturate((_FillAmount - _FillMin) / (_FillMax - _FillMin));
+                float t = saturate(_VisibleAmount);
                 
                 float cutoff = lerp(_FillMin, _FillMax, t);
                 float _NormAmount1 = lerp(_FillMin, _FillMax, saturate(_Amount1));
                 float _NormAmount2 = lerp(_FillMin, _FillMax, saturate(_Amount1 + _Amount2));
                 float _NormAmount3 = lerp(_FillMin, _FillMax, saturate(_Amount1 + _Amount2 + _Amount3));
-                float _NormAmount4 = lerp(_FillMin, _FillMax, _FillAmount);
+                float _NormAmount4 = cutoff;
 
                 // Control number of color and their amount
                 float mask = step(nmPos, cutoff*_ScaleOffset);
