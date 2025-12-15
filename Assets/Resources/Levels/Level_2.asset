@@ -14,19 +14,55 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 8
   height: 2
-  numberOfBottles: 3
+  numberOfBottles: 8
   bottleSettings:
   - eachWaterAmount:
-    - 0.5
+    - 0.25
+    - 0.25
+    - 0.25
+    - 0.25
     eachColor:
-    - {r: 1, g: 0, b: 0, a: 1}
+    - {r: 0.5882353, g: 0, b: 1, a: 1}
+    - {r: 1, g: 1, b: 0, a: 1}
+    - {r: 0.5882353, g: 0, b: 1, a: 1}
+    - {r: 1, g: 1, b: 0, a: 1}
+  - eachWaterAmount:
+    - 0.25
+    eachColor:
+    - {r: 0.5882353, g: 0, b: 1, a: 1}
   - eachWaterAmount:
     - 0.5
-    - 0.5
+    - 0.25
+    - 0.25
     eachColor:
-    - {r: 1, g: 0, b: 0, a: 1}
-    - {r: 0, g: 0, b: 1, a: 1}
+    - {r: 1, g: 1, b: 0, a: 1}
+    - {r: 0.5882353, g: 0, b: 1, a: 1}
+    - {r: 1, g: 1, b: 0, a: 1}
   - eachWaterAmount:
+    - 0.25
+    - 0.5
+    - 0.25
+    eachColor:
+    - {r: 1, g: 1, b: 0, a: 1}
+    - {r: 0.5882353, g: 0, b: 1, a: 1}
+    - {r: 1, g: 1, b: 0, a: 1}
+  - eachWaterAmount:
+    - 0.75
+    eachColor:
+    - {r: 0.5882353, g: 0, b: 1, a: 1}
+  - eachWaterAmount:
+    - 0.25
+    eachColor:
+    - {r: 1, g: 1, b: 0, a: 1}
+  - eachWaterAmount:
+    - 0.75
+    - 0.25
+    eachColor:
+    - {r: 1, g: 1, b: 0, a: 1}
+    - {r: 0.5882353, g: 0, b: 1, a: 1}
+  - eachWaterAmount:
+    - 0.25
     - 0.5
     eachColor:
-    - {r: 0, g: 0, b: 1, a: 1}
+    - {r: 1, g: 1, b: 0, a: 1}
+    - {r: 0.5882353, g: 0, b: 1, a: 1}

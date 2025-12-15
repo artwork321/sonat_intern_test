@@ -19,6 +19,8 @@ public class Bottle : MonoBehaviour
 
     private BoxCollider2D bottleCollider;
 
+    // public GameObject surface;
+
     private bool isAnimating = false;
 
     public void Awake()
@@ -134,7 +136,7 @@ public class Bottle : MonoBehaviour
 
     public Color GetTopWaterColor()
     {
-        if (totalWaterAmount == 0) return Color.clear;
+        if (waterAmount.Count == 0) return Color.clear;
 
         string colorName = "_Color" + waterAmount.Count;
         return watermat.GetColor(colorName);
@@ -146,27 +148,28 @@ public class Bottle : MonoBehaviour
         string colorName = "_Color" + waterAmount.Count;
 
         float topAmount = GetTopWaterAmount();
+        float newAmount;
 
         // Update stack to reflect the amount of water in the bottle
         if (topAmount == amount)
         {
             // Remove all the top water
             waterAmount.Pop();
-            watermat.SetColor(colorName, Color.clear);
+            newAmount = 0;
         }
         else
         {
             // Decrease the top amount by amount
             waterAmount.Pop();
-            waterAmount.Push(topAmount - amount);
+            newAmount = topAmount - amount;
+            waterAmount.Push(newAmount);
         }
 
-        watermat.SetFloat(amountName, topAmount - amount);
-        totalWaterAmount -= amount;
-        // watermat.SetFloat("_VisibleAmount", totalWaterAmount);
+        if (!isAnimating)
+            StartCoroutine(AnimateWaterFill(topAmount, newAmount, totalWaterAmount - amount, amountName));
     }
 
-    public void addTopWaterAmount(float amount, Color color)
+    public void AddTopWaterAmount(float amount, Color color)
     {
         // Pour new color if bottle is empty
         if (totalWaterAmount == 0)
@@ -194,11 +197,15 @@ public class Bottle : MonoBehaviour
         float elapsedTime = 0f;
         float volumeChange = endAmount - startAmount;
         float waterAmount = startAmount;
+        float totalAmount;
+        float oriWaterAmount = totalWaterAmount;
 
         while (elapsedTime < 1f)
         {
             waterAmount = Mathf.Lerp(startAmount, endAmount, elapsedTime / 1f);
+            totalAmount = Mathf.Lerp(oriWaterAmount, newTotal, elapsedTime / 1f);
             watermat.SetFloat(amountName, waterAmount);
+            totalWaterAmount = totalAmount;
 
             elapsedTime += Time.deltaTime;
             yield return null;

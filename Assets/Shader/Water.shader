@@ -90,7 +90,7 @@ Shader "Unlit/Water"
                 float _NormAmount1 = lerp(_FillMin, _FillMax, saturate(_Amount1));
                 float _NormAmount2 = lerp(_FillMin, _FillMax, saturate(_Amount1 + _Amount2));
                 float _NormAmount3 = lerp(_FillMin, _FillMax, saturate(_Amount1 + _Amount2 + _Amount3));
-                float _NormAmount4 = cutoff;
+                float _NormAmount4 = lerp(_FillMin, _FillMax, saturate(_Amount1 + _Amount2 + _Amount3 + _Amount4));;
 
                 // Control number of color and their amount
                 float mask = step(nmPos, cutoff*_ScaleOffset);
